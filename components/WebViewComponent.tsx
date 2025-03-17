@@ -1,11 +1,15 @@
 import { WebView } from 'react-native-webview';
 import Constants from 'expo-constants';
 import { Dimensions, StyleSheet } from 'react-native';
-import React from 'react';
+
 const height = Dimensions.get('screen').height;
 const width = Dimensions.get('screen').width;
 
-export default function App({ uri }) {
+interface WebViewComponentProps {
+  uri: string;
+}
+
+export default function WebViewComponent({ uri }: WebViewComponentProps) {
   console.log('++++++++ URI', uri);
   return <WebView style={styles.container} source={{ uri: ' https://freedium.cfd/' + uri }} />;
 }

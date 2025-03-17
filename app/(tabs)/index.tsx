@@ -4,7 +4,6 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useShareIntent } from 'expo-share-intent';
 import WebViewComponent from '@/components/WebViewComponent';
-import React from 'react';
 import { useColorScheme } from 'react-native';
 
 export default function HomeScreen() {
@@ -14,10 +13,10 @@ export default function HomeScreen() {
   return (
     <ThemedView style={styles.container}>
       {!hasShareIntent && (
-        <ThemedText style={[styles.gap, styles.bold]}>NO SHARED LINK DETECTED!!</ThemedText>
-      )}
-      {!hasShareIntent && (
-        <ThemedText style={[styles.gap, styles.bold]}>TRY SHARING A LINK FROM MEDIUM</ThemedText>
+        <>
+          <ThemedText style={[styles.gap, styles.bold]}>NO SHARED LINK DETECTED!!</ThemedText>
+          <ThemedText style={[styles.gap, styles.bold]}>TRY SHARING A LINK FROM MEDIUM</ThemedText>
+        </>
       )}
 
       {/* TEXT and URL */}
