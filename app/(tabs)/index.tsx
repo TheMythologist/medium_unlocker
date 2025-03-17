@@ -1,21 +1,17 @@
-import { Image, StyleSheet, Platform, View, Dimensions } from 'react-native';
+import { StyleSheet } from 'react-native';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useShareIntent } from "expo-share-intent";
-import { Text } from 'react-native';
 import WebViewComponent from '@/components/WebViewComponent'
 import React from 'react';
-import * as SystemUI from 'expo-system-ui';
-import { Appearance, useColorScheme } from 'react-native';
+import { useColorScheme } from 'react-native';
 
 
 export default function HomeScreen() {
   let colorScheme = useColorScheme();
   console.log('COLOR SCGEME', colorScheme)
-  const { hasShareIntent, shareIntent, resetShareIntent, error } = useShareIntent();
+  const { hasShareIntent, shareIntent } = useShareIntent();
   return (
     <ThemedView style={styles.container}>
       {!hasShareIntent &&
