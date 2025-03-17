@@ -4,12 +4,10 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useShareIntent } from 'expo-share-intent';
 import WebViewComponent from '@/components/WebViewComponent';
-import { useColorScheme } from 'react-native';
 
 export default function HomeScreen() {
-  let colorScheme = useColorScheme();
-  console.log('COLOR SCGEME', colorScheme);
   const { hasShareIntent, shareIntent } = useShareIntent();
+
   return (
     <ThemedView style={styles.container}>
       {!hasShareIntent && (

@@ -23,7 +23,7 @@
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#1a1c24"
       },
-      "package": "com.akashkaushik.medium_unlocker"
+      "package": "com.TheMythologist.medium_unlocker"
     },
     "web": {
       "bundler": "metro",
