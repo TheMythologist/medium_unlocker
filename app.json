@@ -27,10 +27,7 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": [
-      "expo-router",
-      "expo-share-intent"
-    ],
+    "plugins": ["expo-router", "expo-share-intent"],
     "experiments": {
       "typedRoutes": true
     },
@@ -42,8 +39,7 @@
         "build": {
           "experimental": {
             "ios": {
-              "appExtensions": [
-              ]
+              "appExtensions": []
             }
           }
         },
