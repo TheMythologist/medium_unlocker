@@ -1,8 +1,8 @@
 {
   "expo": {
     "name": "Medium Unlocker",
-    "slug": "medium_unlocker",
-    "version": "1.0.0",
+    "slug": "medium-unlocker",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
@@ -23,14 +23,38 @@
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#1a1c24"
       },
-      "package": "com.TheMythologist.medium_unlocker"
+      "package": "com.TheMythologist.medium_unlocker",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "*.medium.com"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        },
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "medium.com"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "web": {
       "bundler": "metro",
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": ["expo-router", "expo-share-intent"],
+    "plugins": ["expo-router"],
     "experiments": {
       "typedRoutes": true
     },
@@ -46,10 +70,10 @@
             }
           }
         },
-        "projectId": "3a5eb1ba-d986-47c5-bd49-2e714dcd4696"
+        "projectId": "f2c1cae3-6390-4aa9-8df8-2f92c0993d55"
       }
     },
-    "owner": "TheMythologist",
+    "owner": "themythologist",
     "githubUrl": "https://github.com/TheMythologist/medium_unlocker"
   }
 }

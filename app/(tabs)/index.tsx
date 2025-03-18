@@ -2,24 +2,26 @@ import { StyleSheet } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { useShareIntent } from 'expo-share-intent';
 import WebViewComponent from '@/components/WebViewComponent';
+import { useURL } from 'expo-linking';
 
 export default function HomeScreen() {
-  const { hasShareIntent, shareIntent } = useShareIntent();
+  const url = useURL();
+
+  if (url === null) {
+    return (
+      <ThemedView style={styles.container}>
+        <ThemedText style={[styles.gap, styles.bold]}>NO SHARED LINK DETECTED!!</ThemedText>
+        <ThemedText style={[styles.gap, styles.bold]}>TRY SHARING A LINK FROM MEDIUM</ThemedText>
+      </ThemedView>
+    );
+  }
 
   return (
     <ThemedView style={styles.container}>
-      {!hasShareIntent && (
-        <>
-          <ThemedText style={[styles.gap, styles.bold]}>NO SHARED LINK DETECTED!!</ThemedText>
-          <ThemedText style={[styles.gap, styles.bold]}>TRY SHARING A LINK FROM MEDIUM</ThemedText>
-        </>
-      )}
-
       {/* TEXT and URL */}
       {/* {!!shareIntent.text && <Text style={styles.gap}>{shareIntent.text}</Text>} */}
-      {!!shareIntent.webUrl && <WebViewComponent uri={shareIntent.webUrl} />}
+      <WebViewComponent uri={url} />
       {/* {!!shareIntent.meta?.title && (
         <Text style={styles.gap}>{JSON.stringify(shareIntent.meta)}</Text>
       )} */}
