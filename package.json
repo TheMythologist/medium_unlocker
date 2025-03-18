@@ -21,6 +21,8 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
+    "@react-native-async-storage/async-storage": "^2.1.2",
+    "@react-native-cookies/cookies": "^6.2.1",
     "@react-navigation/native": "^6.0.2",
     "expo": "~51.0.39",
     "expo-constants": "~16.0.2",
