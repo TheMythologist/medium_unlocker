@@ -1,27 +1,17 @@
 import { useURL } from 'expo-linking';
 import { StyleSheet } from 'react-native';
 
-import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import WebViewComponent from '@/components/WebViewComponent';
 
 export default function HomeScreen() {
   const url = useURL();
 
-  if (url === null) {
-    return (
-      <ThemedView style={styles.container}>
-        <ThemedText style={[styles.gap, styles.bold]}>NO SHARED LINK DETECTED!!</ThemedText>
-        <ThemedText style={[styles.gap, styles.bold]}>TRY SHARING A LINK FROM MEDIUM</ThemedText>
-      </ThemedView>
-    );
-  }
-
   return (
     <ThemedView style={styles.container}>
       {/* TEXT and URL */}
       {/* {!!shareIntent.text && <Text style={styles.gap}>{shareIntent.text}</Text>} */}
-      <WebViewComponent uri={url} />
+      <WebViewComponent uri={url || 'https://freedium.cfd/'} />
       {/* {!!shareIntent.meta?.title && (
         <Text style={styles.gap}>{JSON.stringify(shareIntent.meta)}</Text>
       )} */}
