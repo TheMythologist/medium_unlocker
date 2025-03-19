@@ -26,8 +26,14 @@ jobs:
       - name: 🚀 Build Android app
         run: eas build -p android --profile preview --local --non-interactive --output ${{ github.workspace }}/medium_unlocker.apk
 
-      - name: Upload APK to release
+      - name: 🚀 Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: medium_unlocker.apk
+          path: ${{ github.workspace }}/medium_unlocker.apk
+
+      - name: 🚀 Upload APK to release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: ${{ github.workspace }}/medium_unlocker.apk
+          files: ${{ github.workspace }}/medium_unlocker_${{ github.ref_name }}.apk
