@@ -11,7 +11,7 @@ export default function HomeScreen() {
     <ThemedView style={styles.container}>
       {/* TEXT and URL */}
       {/* {!!shareIntent.text && <Text style={styles.gap}>{shareIntent.text}</Text>} */}
-      <WebViewComponent uri={url || 'https://freedium.cfd/'} />
+      <WebViewComponent uri={url || ''} />
       {/* {!!shareIntent.meta?.title && (
         <Text style={styles.gap}>{JSON.stringify(shareIntent.meta)}</Text>
       )} */}
