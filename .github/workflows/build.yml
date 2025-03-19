@@ -24,13 +24,13 @@ jobs:
         run: npm install
 
       - name: 🚀 Build Android app
-        run: eas build -p android --profile preview --local --non-interactive --output ${{ github.workspace }}/medium_unlocker.apk
+        run: eas build -p android --profile preview --local --non-interactive --output ${{ github.workspace }}/medium_unlocker_${{ github.ref_name }}.apk
 
       - name: 🚀 Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: medium_unlocker.apk
-          path: ${{ github.workspace }}/medium_unlocker.apk
+          path: ${{ github.workspace }}/medium_unlocker_${{ github.ref_name }}.apk
 
       - name: 🚀 Upload APK to release
         uses: softprops/action-gh-release@v2
