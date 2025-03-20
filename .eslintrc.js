@@ -9,7 +9,10 @@ module.exports = {
   settings: {
     'import/resolver': {
       typescript: true,
-      node: true,
+      node: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        moduleDirectory: ['node_modules', 'app', 'components', 'constants', 'hooks'],
+      },
     },
   },
 };
