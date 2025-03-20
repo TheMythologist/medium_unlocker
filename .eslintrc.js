@@ -11,6 +11,7 @@ module.exports = {
       typescript: true,
       node: {
         extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        moduleDirectory: ['node_modules', 'app', 'components', 'constants', 'hooks'],
       },
     },
   },
