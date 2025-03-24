@@ -13,7 +13,7 @@ interface WebViewComponentProps {
 }
 
 const COOKIE_STORAGE_KEY = 'persistedCookies';
-const SITE_URL = 'https://freedium.cfd/';
+const SITE_URL = 'https://freedium.cfd';
 
 export default function WebViewComponent({ uri }: WebViewComponentProps) {
   const webviewRef = useRef(null);
@@ -57,7 +57,7 @@ export default function WebViewComponent({ uri }: WebViewComponentProps) {
         <WebView
           ref={webviewRef}
           style={styles.container}
-          source={{ uri: SITE_URL + uri }}
+          source={{ uri: `${SITE_URL}/${uri}` }}
           originWhitelist={[SITE_URL]}
           sharedCookiesEnabled={true}
           thirdPartyCookiesEnabled={true}
