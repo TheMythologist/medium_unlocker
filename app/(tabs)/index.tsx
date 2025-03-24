@@ -9,43 +9,12 @@ export default function HomeScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      {/* TEXT and URL */}
-      {/* {!!shareIntent.text && <Text style={styles.gap}>{shareIntent.text}</Text>} */}
       <WebViewComponent uri={url || ''} />
-      {/* {!!shareIntent.meta?.title && (
-        <Text style={styles.gap}>{JSON.stringify(shareIntent.meta)}</Text>
-      )} */}
     </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-  gap: {
-    marginBottom: 20,
-  },
-  bold: {
-    fontWeight: 'bold',
-  },
-  meta: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   container: {
     flex: 1,
     alignItems: 'center',
@@ -53,7 +22,7 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
     overflow: 'hidden',
-    // backgroundColor: '#1a1c24'
+    backgroundColor: '#1a1c24',
     marginTop: -10,
   },
 });

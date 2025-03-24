@@ -1,8 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CookieManager, { type Cookies } from '@react-native-cookies/cookies';
-// eslint-disable-next-line import/no-named-as-default
-import Constants from 'expo-constants';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   BackHandler,
@@ -11,21 +9,24 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import { WebView } from 'react-native-webview';
+import { WebView, WebViewNavigation } from 'react-native-webview';
+import { CurrentUrlContext } from '@/hooks/useCurrentUrlContext';
 
 const { height, width } = Dimensions.get('screen');
+
+const COOKIE_STORAGE_KEY = 'persistedCookies';
+const SITE_URL = 'https://freedium.cfd';
 
 interface WebViewComponentProps {
   uri: string;
 }
 
-const COOKIE_STORAGE_KEY = 'persistedCookies';
-const SITE_URL = 'https://freedium.cfd';
-
 export default function WebViewComponent({ uri }: WebViewComponentProps) {
   const webViewRef = useRef<WebView>(null);
   const canGoBackRef = useRef(false);
   const [loading, setLoading] = useState(true);
+
+  const [_, setCurrentUrl] = useContext(CurrentUrlContext);
 
   useEffect(() => {
     const restoreCookies = async () => {
@@ -44,7 +45,6 @@ export default function WebViewComponent({ uri }: WebViewComponentProps) {
             }),
           ),
         );
-        console.log('Cookies restored!');
       }
       setLoading(false);
     };
@@ -66,10 +66,10 @@ export default function WebViewComponent({ uri }: WebViewComponentProps) {
     }
   }, []);
 
-  const saveCookies = async () => {
+  const onNavigationStateChange = async (event: WebViewNavigation) => {
+    setCurrentUrl(event.url);
     const cookies = await CookieManager.get(SITE_URL);
     await AsyncStorage.setItem(COOKIE_STORAGE_KEY, JSON.stringify(cookies));
-    console.log('Cookies saved:', cookies);
   };
 
   return (
@@ -84,7 +84,7 @@ export default function WebViewComponent({ uri }: WebViewComponentProps) {
           originWhitelist={[SITE_URL]}
           sharedCookiesEnabled={true}
           thirdPartyCookiesEnabled={true}
-          onNavigationStateChange={saveCookies}
+          onNavigationStateChange={onNavigationStateChange}
           allowsBackForwardNavigationGestures
           onLoadProgress={(event) => (canGoBackRef.current = event.nativeEvent.canGoBack)}
         />
@@ -96,7 +96,6 @@ export default function WebViewComponent({ uri }: WebViewComponentProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: Constants.statusBarHeight,
     height,
     width,
     overflow: 'hidden',
