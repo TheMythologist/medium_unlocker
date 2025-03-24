@@ -5,15 +5,8 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
-import {
-  Alert,
-  Linking,
-  useColorScheme,
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
+import { Linking, useColorScheme, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import Toast from 'react-native-toast-message';
 import { CurrentUrlContext } from '@/hooks/useCurrentUrlContext';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -39,7 +32,10 @@ export default function RootLayout() {
 
   const copyToClipboard = async () => {
     await Clipboard.setStringAsync(currentUrl);
-    Alert.alert('Copied', 'URL copied to clipboard');
+    Toast.show({
+      type: 'success',
+      text1: 'URL copied to clipboard',
+    });
   };
 
   const openInBrowser = () => {
@@ -74,6 +70,7 @@ export default function RootLayout() {
           <Stack.Screen name="+not-found" />
         </Stack>
       </ThemeProvider>
+      <Toast position="bottom" />
     </CurrentUrlContext.Provider>
   );
 }
