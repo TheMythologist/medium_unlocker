@@ -3,7 +3,14 @@ import CookieManager, { type Cookies } from '@react-native-cookies/cookies';
 // eslint-disable-next-line import/no-named-as-default
 import Constants from 'expo-constants';
 import { useEffect, useRef, useState } from 'react';
-import { Dimensions, StyleSheet, View, ActivityIndicator } from 'react-native';
+import {
+  ActivityIndicator,
+  BackHandler,
+  Dimensions,
+  Platform,
+  StyleSheet,
+  View,
+} from 'react-native';
 import { WebView } from 'react-native-webview';
 
 const { height, width } = Dimensions.get('screen');
@@ -16,7 +23,8 @@ const COOKIE_STORAGE_KEY = 'persistedCookies';
 const SITE_URL = 'https://freedium.cfd';
 
 export default function WebViewComponent({ uri }: WebViewComponentProps) {
-  const webviewRef = useRef(null);
+  const webViewRef = useRef<WebView>(null);
+  const canGoBackRef = useRef(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -43,6 +51,21 @@ export default function WebViewComponent({ uri }: WebViewComponentProps) {
     restoreCookies();
   }, []);
 
+  useEffect(() => {
+    const onAndroidBackPress = () => {
+      if (canGoBackRef.current) {
+        webViewRef.current?.goBack();
+        return true;
+      }
+      return false;
+    };
+
+    if (Platform.OS === 'android') {
+      BackHandler.addEventListener('hardwareBackPress', onAndroidBackPress);
+      return () => BackHandler.removeEventListener('hardwareBackPress', onAndroidBackPress);
+    }
+  }, []);
+
   const saveCookies = async () => {
     const cookies = await CookieManager.get(SITE_URL);
     await AsyncStorage.setItem(COOKIE_STORAGE_KEY, JSON.stringify(cookies));
@@ -55,13 +78,15 @@ export default function WebViewComponent({ uri }: WebViewComponentProps) {
         <ActivityIndicator size="large" style={{ flex: 1 }} />
       ) : (
         <WebView
-          ref={webviewRef}
+          ref={webViewRef}
           style={styles.container}
           source={{ uri: `${SITE_URL}/${uri}` }}
           originWhitelist={[SITE_URL]}
           sharedCookiesEnabled={true}
           thirdPartyCookiesEnabled={true}
           onNavigationStateChange={saveCookies}
+          allowsBackForwardNavigationGestures
+          onLoadProgress={(event) => (canGoBackRef.current = event.nativeEvent.canGoBack)}
         />
       )}
     </View>
