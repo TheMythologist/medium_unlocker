@@ -27,7 +27,7 @@
     "expo-clipboard": "~6.0.3",
     "expo-font": "~12.0.9",
     "expo-linking": "~6.3.1",
-    "expo-router": "~3.5.24",
+    "expo-router": "~4.0.19",
     "expo-splash-screen": "~0.27.7",
     "react": "18.2.0",
     "react-dom": "18.2.0",
