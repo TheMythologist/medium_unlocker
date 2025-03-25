@@ -3,8 +3,8 @@ import CookieManager, { type Cookies } from '@react-native-cookies/cookies';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { BackHandler, Dimensions, Platform, StyleSheet, View } from 'react-native';
 import * as Progress from 'react-native-progress';
-import { WebView, WebViewNavigation } from 'react-native-webview';
-import { WebViewProgressEvent } from 'react-native-webview/lib/WebViewTypes';
+import { WebView, type WebViewNavigation } from 'react-native-webview';
+import type { WebViewProgressEvent } from 'react-native-webview/lib/WebViewTypes';
 import { CurrentUrlContext } from '@/hooks/useCurrentUrlContext';
 
 const { height, width } = Dimensions.get('screen');
@@ -20,7 +20,7 @@ export default function WebViewComponent({ uri }: WebViewComponentProps) {
   const webViewRef = useRef<WebView>(null);
   const canGoBackRef = useRef(false);
   const timeoutRef = useRef<NodeJS.Timeout>();
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [percentageLoaded, setPercentageLoaded] = useState(0);
 
   const [_, setCurrentUrl] = useContext(CurrentUrlContext);
@@ -43,7 +43,7 @@ export default function WebViewComponent({ uri }: WebViewComponentProps) {
           ),
         );
       }
-      setLoading(false);
+      setIsLoading(false);
     };
     restoreCookies();
   }, []);
@@ -77,11 +77,11 @@ export default function WebViewComponent({ uri }: WebViewComponentProps) {
   const onLoadStart = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     timeoutRef.current = undefined;
-    setLoading(true);
+    setIsLoading(true);
   };
 
   const onLoadEnd = () => {
-    const timeout = setTimeout(() => setLoading(false), 500);
+    const timeout = setTimeout(() => setIsLoading(false), 500);
     timeoutRef.current = timeout;
   };
 
@@ -99,8 +99,9 @@ export default function WebViewComponent({ uri }: WebViewComponentProps) {
         onLoadStart={onLoadStart}
         onLoadEnd={onLoadEnd}
         onLoadProgress={onLoadProgress}
+        domStorageEnabled={true}
       />
-      {loading && (
+      {isLoading && (
         <Progress.Bar
           style={styles.progressBar}
           progress={percentageLoaded}

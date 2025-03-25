@@ -5,16 +5,15 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
-import { Appearance, Linking, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { Linking, StyleSheet, View, Text, TouchableOpacity, useColorScheme } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { CurrentUrlContext } from '@/hooks/useCurrentUrlContext';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
-const colorScheme = Appearance.getColorScheme();
-
 export default function RootLayout() {
+  const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
@@ -53,7 +52,13 @@ export default function RootLayout() {
               title: currentUrl,
               headerTitle: ({ children }) => (
                 <View style={styles.titleContainer}>
-                  <Text numberOfLines={1} ellipsizeMode="tail" style={styles.urlText}>
+                  <Text
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                    style={[
+                      styles.urlText,
+                      { color: colorScheme === 'dark' ? '#c6c7c6' : '#000' },
+                    ]}>
                     {children}
                   </Text>
                   <TouchableOpacity onPress={copyToClipboard}>
@@ -86,7 +91,6 @@ const styles = StyleSheet.create({
   urlText: {
     flex: 1,
     fontSize: 14,
-    color: colorScheme === 'dark' ? '#c6c7c6' : '#000',
     marginRight: 8,
   },
 });
