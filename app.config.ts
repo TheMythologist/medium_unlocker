@@ -154,6 +154,44 @@ const config: { expo: ExpoConfig } = {
           ],
           category: ['BROWSABLE', 'DEFAULT'],
         },
+        {
+          // Non-Medium publishers supported by the Freedium backend
+          action: 'VIEW',
+          data: [
+            // The Athletic
+            { host: 'theathletic.com' },
+            { host: 'www.theathletic.com' },
+
+            // The New York Times
+            { host: 'nytimes.com' },
+            { host: 'www.nytimes.com' },
+
+            // The Washington Post
+            { host: 'washingtonpost.com' },
+            { host: 'www.washingtonpost.com' },
+
+            // Financial Times
+            { host: 'ft.com' },
+            { host: 'www.ft.com' },
+
+            // The Economist
+            { host: 'economist.com' },
+            { host: 'www.economist.com' },
+
+            // Reuters
+            { host: 'reuters.com' },
+            { host: 'www.reuters.com' },
+
+            // Bloomberg
+            { host: 'bloomberg.com' },
+            { host: 'www.bloomberg.com' },
+
+            { scheme: 'https' },
+            { scheme: 'http' },
+            { pathPattern: '/..*' },
+          ],
+          category: ['BROWSABLE', 'DEFAULT'],
+        },
       ],
     },
     plugins: ['expo-router', '@react-native-async-storage/expo-with-async-storage', 'expo-font'],
