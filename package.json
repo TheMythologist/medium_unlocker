@@ -19,7 +19,7 @@
     "@react-native-async-storage/async-storage": "3.0.1",
     "@react-native-async-storage/expo-with-async-storage": "^1.0.0",
     "@react-navigation/native": "^7.0.14",
-    "expo": "~55.0.5",
+    "expo": "~55.0.28",
     "expo-clipboard": "~55.0.8",
     "expo-constants": "~55.0.7",
     "expo-dev-client": "~55.0.13",
