@@ -3,10 +3,10 @@ import { StyleSheet } from 'react-native';
 
 import { ThemedView } from '@/components/ThemedView';
 import WebViewComponent from '@/components/WebViewComponent';
+import { toSitePath } from '@/constants/config';
 
 export default function HomeScreen() {
-  const rawUrl = useLinkingURL();
-  const url = rawUrl?.match(/^https?:\/\//) ? rawUrl : '';
+  const url = toSitePath(useLinkingURL());
 
   return (
     <ThemedView style={styles.container}>
