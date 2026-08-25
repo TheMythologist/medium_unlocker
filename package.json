@@ -1,7 +1,7 @@
 {
   "name": "medium_unlocker",
   "main": "expo-router/entry",
-  "version": "2.3.1",
+  "version": "2.4.0",
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",
