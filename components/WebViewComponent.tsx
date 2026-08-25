@@ -28,6 +28,13 @@ import {
   NavigateContext,
   ReloadContext,
 } from '@/hooks/useCurrentUrlContext';
+import {
+  type DownloadedFile,
+  downloadToCache,
+  isPickerCancelled,
+  openFile,
+  saveDownload,
+} from '@/modules/download';
 import { openExternal } from '@/modules/open-in-browser';
 
 // Chrome SwipeRefreshLayout values (dp maps 1:1 in RN)
@@ -94,12 +101,73 @@ const INJECTED_JS = `
         url: window.location.href
       }));
     }
+
+    // Freedium's "Download as PDF" POSTs /api/pdf, then hands the resulting blob
+    // to an <a download> click. Android WebView never routes blob: URLs to its
+    // DownloadListener and ignores the download attribute, so that click is inert
+    // and the download silently never happens. Intercept the request instead and
+    // let the native side replay it and save the file.
+    if (!window.__nativeDownload) {
+      var pendingDownloads = {};
+      var nextDownloadId = 1;
+
+      // Called from native once the download settles. Idempotent, so the native
+      // side can call it from both its success and failure paths.
+      window.__nativeDownload = function(id) {
+        var settle = pendingDownloads[id];
+        if (!settle) return;
+        delete pendingDownloads[id];
+        settle();
+      };
+
+      var originalFetch = window.fetch;
+      window.fetch = function(input, init) {
+        var url = typeof input === 'string' ? input : (input && input.url) || '';
+        var method = ((init && init.method) || (input && input.method) || 'GET').toUpperCase();
+        var body = init && typeof init.body === 'string' ? init.body : null;
+
+        if (method === 'POST' && body !== null && /\\/api\\/pdf(?:[?#]|$)/.test(url)) {
+          var id = nextDownloadId++;
+          window.ReactNativeWebView.postMessage(JSON.stringify({
+            type: 'nativeDownload',
+            id: id,
+            url: new URL(url, window.location.href).href,
+            body: body,
+            userAgent: navigator.userAgent,
+            referer: window.location.href
+          }));
+
+          // Resolve only once the native download settles, so the page's own
+          // "generating" state keeps guarding against a second tap. The empty
+          // blob it then feeds to <a download> goes nowhere, which is fine.
+          return new Promise(function(resolve) {
+            pendingDownloads[id] = function() {
+              resolve(new Response(new Blob([], { type: 'application/pdf' }), {
+                status: 200,
+                headers: { 'content-type': 'application/pdf' }
+              }));
+            };
+          });
+        }
+
+        return originalFetch.apply(window, arguments);
+      };
+    }
   })();
   true;
 `;
 
 interface WebViewComponentProps {
   uri: string;
+}
+
+/** Payload posted by the fetch interceptor in {@link INJECTED_JS}. */
+interface NativeDownloadRequest {
+  id: number;
+  url: string;
+  body: string;
+  userAgent?: string;
+  referer?: string;
 }
 
 export default function WebViewComponent({ uri }: WebViewComponentProps) {
@@ -176,6 +244,60 @@ export default function WebViewComponent({ uri }: WebViewComponentProps) {
     }),
   ).current;
 
+  const settleDownload = (id: number) => {
+    webViewRef.current?.injectJavaScript(
+      `window.__nativeDownload && window.__nativeDownload(${id}); true;`,
+    );
+  };
+
+  const handleNativeDownload = async (request: NativeDownloadRequest) => {
+    Toast.show({ type: 'info', text1: 'Preparing download' });
+
+    let file: DownloadedFile;
+    try {
+      const cookies = await CookieManager.get(SITE_URL);
+      const cookie = Object.values(cookies)
+        .map((entry) => `${entry.name}=${entry.value}`)
+        .join('; ');
+      file = await downloadToCache({ ...request, cookie, fallbackFilename: 'article.pdf' });
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Download failed',
+        text2: error instanceof Error ? error.message : undefined,
+      });
+      return;
+    } finally {
+      // Release the page's intercepted fetch either way, so its "generating"
+      // guard clears instead of blocking every later attempt.
+      settleDownload(request.id);
+    }
+
+    try {
+      const saved = await saveDownload(file);
+      Toast.show({
+        type: 'success',
+        text1: `Saved ${saved.savedName}`,
+        text2: 'Tap to open',
+        onPress: () => {
+          Toast.hide();
+          // Opened from the cache copy, whose URI the app can grant access to.
+          openFile(saved.cached).catch(() =>
+            Toast.show({ type: 'error', text1: 'No app available to open this file' }),
+          );
+        },
+      });
+    } catch (error) {
+      // Backing out of the folder picker is a choice, not a failure.
+      if (isPickerCancelled(error)) return;
+      Toast.show({
+        type: 'error',
+        text1: 'Could not save the file',
+        text2: error instanceof Error ? error.message : undefined,
+      });
+    }
+  };
+
   const onWebViewMessage = (event: { nativeEvent: { data: string } }) => {
     try {
       const data = JSON.parse(event.nativeEvent.data);
@@ -185,6 +307,8 @@ export default function WebViewComponent({ uri }: WebViewComponentProps) {
         setLongPressedLink(data.url);
       } else if (data.type === 'pageInfo') {
         addEntry(data.url, data.title);
+      } else if (data.type === 'nativeDownload') {
+        handleNativeDownload(data);
       }
     } catch {
       // ignore non-JSON messages
